@@ -1,14 +1,25 @@
+
+package escom.carritocomprasservidor;
+
+import java.awt.Desktop;
 import java.io.*;
 import java.net.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.*;
 
 public class Cliente {
     public static void main(String args[]) {
+        
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Ingrese la IP del servidor: ");
+        
+        /*System.out.print("Ingrese la IP del servidor: ");
         String host = scanner.nextLine();
         System.out.print("Ingrese el puerto del servidor: ");
         int puerto = scanner.nextInt();
+        */
+        String host = "localhost";
+        int puerto = 6040;
 
         File carpeta = new File("Catálogo");
         if (!carpeta.exists() && !carpeta.mkdirs()) {
@@ -18,6 +29,35 @@ public class Cliente {
 
         try (Socket cl = new Socket(host, puerto)) {
             System.out.println("Conexión establecida con el servidor en " + host + ":" + puerto);
+            
+            DataInputStream input = new DataInputStream(cl.getInputStream());
+
+            for (int i = 1; i <= 5; i++) {
+                // Leer el nombre del archivo y su tamaño
+                String fileName = input.readUTF();
+                long fileSize = input.readLong();
+
+                File receivedFile = new File("recibida_" + fileName);
+                
+                // Crear archivo con el mismo nombre recibido
+                FileOutputStream fileOut = new FileOutputStream(receivedFile);
+
+                // Leer y guardar el archivo recibido
+                byte[] buffer = new byte[4096];
+                long bytesRead = 0;
+                while (bytesRead < fileSize) {
+                    int read = input.read(buffer, 0, (int) Math.min(buffer.length, fileSize - bytesRead));
+                    bytesRead += read;
+                    fileOut.write(buffer, 0, read);
+                }
+                fileOut.close();
+                //System.out.println("Foto recibida: " + fileName);
+                if (Desktop.isDesktopSupported()) {
+                    Desktop desktop = Desktop.getDesktop();
+                    Path path = FileSystems.getDefault().getPath(receivedFile.getAbsolutePath());
+                    desktop.open(path.toFile());
+                }
+            }
 
             List<Producto> catalogo;
             List<Producto> carrito = new ArrayList<>();

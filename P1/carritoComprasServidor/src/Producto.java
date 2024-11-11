@@ -1,3 +1,6 @@
+
+package escom.carritocomprasservidor;
+
 import java.io.Serializable;
 
 /**
