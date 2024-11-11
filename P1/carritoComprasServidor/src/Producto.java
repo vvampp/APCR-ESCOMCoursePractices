@@ -42,11 +42,11 @@ public class Producto implements Serializable{
         return nombre;
     }
 
-    public void setid(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public int getid() {
+    public int getId() {
         return id;
     }
 
@@ -95,10 +95,11 @@ public class Producto implements Serializable{
     }
 
     public String toString() {
-        return id + "," + nombre + "," + cantidad + "," + precio + "," + enStock + "," + peso + "," + categoria;
+        return id + "\t" + nombre + "\t\t" + cantidad + "\t" + precio + "\t" + enStock + "\t" + peso + "\t" + categoria;
+
     }
 
-    public String toCSV() {
+    public String fromCsv() {
         return id + "," + nombre + "," + cantidad + "," + precio + "," + enStock + "," + peso + "," + categoria;
     }
 }
