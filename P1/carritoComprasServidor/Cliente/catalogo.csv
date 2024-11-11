@@ -4,3 +4,4 @@ id,Nombre,Cantidad,Precio,EnStock,Peso,Categoria
 3,Telefono,6,699.99,true,0.2,B
 4,Television,0,249.99,false,1.5,B
 5,Audifonos,4,99.99,true,0.2,C
+6,Libreta,12,100.0,true,0.01,D

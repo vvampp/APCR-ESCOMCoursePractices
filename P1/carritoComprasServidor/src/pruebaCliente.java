@@ -1,27 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.net.*;
 import java.io.*;
+import java.util.List;
+import java.util.Scanner;
 
-/**
- *
- * @author braul
- */
+public class PruebaCliente {
+    public static void main(String args[]) {
 
-public class pruebaCliente {
-    public static void main(String args[]){
+        // Solicitar IP y puerto al usuario
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ingrese la IP del servidor: ");
+        String host = scanner.nextLine();
+        System.out.print("Ingrese el puerto del servidor: ");
+        int puerto = scanner.nextInt();
 
-        final String host = "127.0.0.1";
-        final int pto = 6040;
-
-        // Crea la carpeta
+        // Crear la carpeta para guardar el archivo recibido
         File carpeta = new File("Cliente");
         if (!carpeta.exists()) {
-            boolean creada = carpeta.mkdirs(); // mkdirs() crea la carpeta y cualquier carpeta padre necesaria
+            boolean creada = carpeta.mkdirs();
             if (creada) {
                 System.out.println("Carpeta creada: " + carpeta.getAbsolutePath());
             } else {
@@ -32,57 +27,35 @@ public class pruebaCliente {
             System.out.println("La carpeta ya existe: " + carpeta.getAbsolutePath());
         }
 
-        try{
-            Socket cl = new Socket(host,pto);
-            for(;;){
-                InputStream inputStream = cl.getInputStream();
-                FileOutputStream fileOutputStream = new FileOutputStream("Cliente/productoSerializadoCliente.csv");
+        try {
+            Socket cl = new Socket(host, puerto);
+            System.out.println("Conexión establecida con el servidor en " + host + ":" + puerto);
 
-                // Recibir el archivo del cliente
-                byte[] buffer = new byte[1024]; // Tamaño del buffer
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    fileOutputStream.write(buffer, 0, bytesRead); // Guardar datos en el archivo
+            try (InputStream inputStream = cl.getInputStream();
+                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+                 BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente/catalogo.csv"))) {
+
+                // Recibir y deserializar el catálogo
+                List<Producto> productos = (List<Producto>) objectInputStream.readObject();
+
+                // Guardar en el archivo CSV y mostrar en consola
+                writer.write("id,Nombre,Cantidad,Precio,EnStock,Peso,Categoria");
+                writer.newLine();
+                for (Producto producto : productos) {
+                    String linea = producto.toString();
+                    System.out.println(linea);
+                    writer.write(linea);
+                    writer.newLine();
                 }
-                System.out.println("Archivo recibido y guardado como productoSerializadoCliente.csv");
+                System.out.println("Archivo recibido y guardado como Cliente/catalogo.csv");
 
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Error al deserializar o guardar el catálogo: " + e.getMessage());
+            }
 
-                try (FileInputStream fileInputStream = new FileInputStream("Cliente/productoSerializadoCliente.csv");
-                     ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente/productoDeserializadoCliente.csv"))) {
-
-                        while (true) {
-                            try {
-                                Object objeto = objectInputStream.readObject();
-                                if (objeto != null) {
-                                    String archDes;
-                                    archDes = objeto.toString();
-                                    System.out.println(archDes);
-                                    writer.write(archDes);
-                                    writer.newLine();
-                                }
-                            } catch (EOFException e) {
-                                // Se alcanza el final del archivo, se rompe el bucle
-                                break;
-                            }
-                        }
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    System.out.println("Objeto deserializado correctamente.\n");
-
-                } catch (IOException | ClassNotFoundException e) {
-                    System.err.println("Error al deserializar el objeto: " + e.getMessage());
-                }
-                cl.close();
-
-
-            }//for
-        }catch(Exception e){
+            cl.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

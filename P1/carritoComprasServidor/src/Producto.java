@@ -17,12 +17,10 @@ public class Producto implements Serializable{
 
     private static int contadorID = 0;
 
-    // Constructor vacío
-    public Producto() {}
 
     // Constructor con parámetros
-    public Producto(String nombre, int cantidad, double precio, float peso, char categoria) {
-        this.id = ++contadorID; // Incrementar y asignar
+    public Producto(int id, String nombre, int cantidad, double precio,boolean enStock, float peso, char categoria) {
+        this.id = id;
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
@@ -102,19 +100,5 @@ public class Producto implements Serializable{
 
     public String toCSV() {
         return id + "," + nombre + "," + cantidad + "," + precio + "," + enStock + "," + peso + "," + categoria;
-    }
-
-    public static Producto fromCSV(String csvLine) {
-        String[] atributos = csvLine.split(",");
-
-        int id = Integer.parseInt(atributos[0]);
-        String nombre = atributos[1];         // String
-        int cantidad = Integer.parseInt(atributos[2]);          // int
-        double precio = Double.parseDouble(atributos[3]);        // double
-        //boolean enStock = Boolean.parseBoolean(atributos[3]);       // boolean
-        float peso = Float.parseFloat(atributos[5]);            // float
-        char categoria = atributos[6].charAt(0);;        // char
-
-        return new Producto(nombre, cantidad, precio, peso, categoria);
     }
 }
