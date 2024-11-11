@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package escom.carritocomprasservidor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,7 +27,7 @@ import java.net.Socket;
 public class servidor {
     public static void main(String args[]){
         Producto[] producto = new Producto[5];
-        
+
         producto[0] = new Producto("Laptop", 10, 1500.99, 1.5f, 'A');
         producto[1] = new Producto("Bocina", 0, 399.99, 5f, 'B');
         producto[2] = new Producto("Telefono", 6, 699.99, .2f, 'B');
@@ -47,9 +46,9 @@ public class servidor {
             //System.out.println("\n");
         }
         */
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("productoAtributos.csv"))) {
-            
+
             writer.write("id,Nombre,Cantidad,Precio,EnStock,Peso,Categoria");
             for (Producto produc : producto) {
                 writer.newLine();
@@ -58,9 +57,9 @@ public class servidor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         try (FileOutputStream fileOut = new FileOutputStream("productoSerializado.csv");
-            ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+             ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
             // Escribir la cabecera del CSV
             out.writeObject("id,Nombre,Cantidad,Precio,EnStock,Peso,Categoria");
             for (Producto produc : producto) {
@@ -70,18 +69,18 @@ public class servidor {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         try{
             ServerSocket s = new ServerSocket(6040);
             System.out.println("Esperando cliente ...");
             for(;;){
-                
+
                 Socket cl = s.accept();
                 System.out.println("Conexión establecida desde"+cl.getInetAddress()+":"+cl.getPort());
-                
+
                 try (
-                    OutputStream outputStream = cl.getOutputStream();
-                    FileInputStream fileInputStream = new FileInputStream("productoSerializado.csv")) {
+                        OutputStream outputStream = cl.getOutputStream();
+                        FileInputStream fileInputStream = new FileInputStream("productoSerializado.csv")) {
 
                     // Enviar el archivo al servidor
                     byte[] buffer = new byte[1024]; // Tamaño del buffer
@@ -90,15 +89,15 @@ public class servidor {
                         outputStream.write(buffer, 0, bytesRead); // Enviar datos
                     }
                     System.out.println("Archivo enviado al Cliente.");
-                    
-                    
-                cl.close();
+
+
+                    cl.close();
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                
-                }//for
+
+            }//for
         }catch(Exception e){
             e.printStackTrace();
         }//catch
@@ -134,6 +133,6 @@ public class servidor {
             System.err.println("Error al deserializar el objeto: " + e.getMessage());
         }
         */
-        
+
     }//main
 }

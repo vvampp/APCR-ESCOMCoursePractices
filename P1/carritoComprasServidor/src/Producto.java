@@ -1,17 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package escom.carritocomprasservidor;
-
 import java.io.Serializable;
 
 /**
  *
  * @author braul
  */
-public class Producto implements Serializable{  
+public class Producto implements Serializable{
 
     // Atributos de la clase
     private int id;
@@ -22,8 +15,8 @@ public class Producto implements Serializable{
     private float peso;            // float
     private char categoria;        // char
 
-    private static int contadorID = 0;  
-    
+    private static int contadorID = 0;
+
     // Constructor vacío
     public Producto() {}
 
@@ -33,20 +26,20 @@ public class Producto implements Serializable{
         this.nombre = nombre;
         this.cantidad = cantidad;
         this.precio = precio;
-        
+
         if(cantidad==0){
             this.enStock = false;
         }
         else{
             this.enStock = true;
         }
-        
+
         this.peso = peso;
         this.categoria = categoria;
     }
 
     // Métodos get y set para cada atributo
-    
+
     public String getNombre() {
         return nombre;
     }
@@ -54,7 +47,7 @@ public class Producto implements Serializable{
     public void setid(int id) {
         this.id = id;
     }
-    
+
     public int getid() {
         return id;
     }
@@ -102,18 +95,18 @@ public class Producto implements Serializable{
     public void setCategoria(char categoria) {
         this.categoria = categoria;
     }
-    
+
     public String toString() {
         return id + "," + nombre + "," + cantidad + "," + precio + "," + enStock + "," + peso + "," + categoria;
     }
-    
+
     public String toCSV() {
         return id + "," + nombre + "," + cantidad + "," + precio + "," + enStock + "," + peso + "," + categoria;
     }
-    
+
     public static Producto fromCSV(String csvLine) {
         String[] atributos = csvLine.split(",");
-        
+
         int id = Integer.parseInt(atributos[0]);
         String nombre = atributos[1];         // String
         int cantidad = Integer.parseInt(atributos[2]);          // int
@@ -121,9 +114,7 @@ public class Producto implements Serializable{
         //boolean enStock = Boolean.parseBoolean(atributos[3]);       // boolean
         float peso = Float.parseFloat(atributos[5]);            // float
         char categoria = atributos[6].charAt(0);;        // char
-        
+
         return new Producto(nombre, cantidad, precio, peso, categoria);
     }
 }
-
-
