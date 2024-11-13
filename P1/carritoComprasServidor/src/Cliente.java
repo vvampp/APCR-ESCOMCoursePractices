@@ -1,5 +1,5 @@
 
-package escom.carritocomprasservidor;
+//package escom.carritocomprasservidor;
 
 import java.awt.Desktop;
 import java.io.*;
@@ -7,19 +7,25 @@ import java.net.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
 
 public class Cliente {
     public static void main(String args[]) {
-        
+
         Scanner scanner = new Scanner(System.in);
-        
-        /*System.out.print("Ingrese la IP del servidor: ");
+
+        System.out.print("Ingrese la IP del servidor: ");
         String host = scanner.nextLine();
         System.out.print("Ingrese el puerto del servidor: ");
         int puerto = scanner.nextInt();
-        */
-        String host = "localhost";
-        int puerto = 6040;
+
+
+//        String host = "localhost";
+//        int puerto = 6040;
 
         File carpeta = new File("Catálogo");
         if (!carpeta.exists() && !carpeta.mkdirs()) {
@@ -29,7 +35,7 @@ public class Cliente {
 
         try (Socket cl = new Socket(host, puerto)) {
             System.out.println("Conexión establecida con el servidor en " + host + ":" + puerto);
-            
+
             DataInputStream input = new DataInputStream(cl.getInputStream());
 
             for (int i = 1; i <= 5; i++) {
@@ -38,7 +44,7 @@ public class Cliente {
                 long fileSize = input.readLong();
 
                 File receivedFile = new File("recibida_" + fileName);
-                
+
                 // Crear archivo con el mismo nombre recibido
                 FileOutputStream fileOut = new FileOutputStream(receivedFile);
 
@@ -93,6 +99,57 @@ public class Cliente {
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void generarReportePDF(List<Producto> carrito, double totalCarrito) {
+        String rutaArchivo = "reporte_carrito.pdf";
+
+        PdfWriter writer = null;
+        PdfDocument pdf = null;
+        Document document = null;
+
+        try {
+            writer = new PdfWriter(rutaArchivo);
+            pdf = new PdfDocument(writer);
+            document = new Document(pdf);
+
+            document.add(new Paragraph("Reporte del Carrito de Compras"));
+            document.add(new Paragraph("Fecha: " + new Date().toString()));
+            document.add(new Paragraph("\nDetalles del Carrito:"));
+
+            Table table = new Table(5);
+            table.addCell("ID");
+            table.addCell("Nombre");
+            table.addCell("Cantidad");
+            table.addCell("Precio Unitario");
+            table.addCell("Total");
+
+            for (Producto producto : carrito) {
+                double totalProducto = producto.getCantidad() * producto.getPrecio();
+                table.addCell(String.valueOf(producto.getId()));
+                table.addCell(producto.getNombre());
+                table.addCell(String.valueOf(producto.getCantidad()));
+                table.addCell(String.valueOf(producto.getPrecio()));
+                table.addCell(String.valueOf(totalProducto));
+            }
+            document.add(table);
+            document.add(new Paragraph("\nTotal del carrito: " + totalCarrito));
+
+            System.out.println("Reporte PDF generado en: " + rutaArchivo);
+
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().open(new File(rutaArchivo));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (document != null) {
+                document.close();
+            }
+            if (pdf != null && !pdf.isClosed()) {
+                pdf.close();
+            }
         }
     }
 
@@ -197,7 +254,19 @@ public class Cliente {
 
         if (opcion == 2) {
             realizarCompra(catalogo, cl);
-            finalizarCliente(cl);
+            generarReportePDF(carrito, totalCarrito);
+
+            System.out.println("\n¿Desea seguir comprando?");
+            System.out.println("[1] Sí");
+            System.out.println("[2] No");
+            int seguirComprando = scanner.nextInt();
+
+            if (seguirComprando == 1) {
+                carrito.clear(); // Vacía el carrito para empezar de nuevo
+                System.out.println("Puede seguir comprando.");
+            } else {
+                finalizarCliente(cl); // Finaliza la conexión y el programa
+            }
         }
     }
 
@@ -214,7 +283,7 @@ public class Cliente {
     private static void finalizarCliente(Socket cl) {
         try {
             cl.close();
-            System.out.println("Gracias por su compra.");
+            System.out.println("Gracias por su compra. Regrese pronto");
         } catch (IOException e) {
             e.printStackTrace();
         }

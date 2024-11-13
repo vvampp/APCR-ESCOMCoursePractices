@@ -7,5 +7,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="itextpdf" level="project" />
+    <orderEntry type="library" name="layout-8.0.5" level="project" />
+    <orderEntry type="library" name="kernel-8.0.5" level="project" />
+    <orderEntry type="library" name="itextpdf-5.5.13.4" level="project" />
+    <orderEntry type="library" name="kernel-8.0.5 (2)" level="project" />
+    <orderEntry type="library" name="layout-8.0.5 (2)" level="project" />
+    <orderEntry type="library" name="io-8.0.5" level="project" />
+    <orderEntry type="library" name="commons-8.0.5" level="project" />
+    <orderEntry type="library" name="slf4j-simple-2.0.16" level="project" />
+    <orderEntry type="library" name="slf4j-api-2.0.16" level="project" />
   </component>
 </module>

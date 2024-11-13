@@ -1,6 +1,6 @@
 id,Nombre,Cantidad,Precio,EnStock,Peso,Categoria
-1,Laptop,6,1500.99,true,1.5,A
-2,Bocina,10,399.99,true,5.0,B
+1,Laptop,1,1500.99,true,1.5,A
+2,Bocina,4,399.99,true,5.0,B
 3,Telefono,10,699.99,true,0.2,B
 4,Television,10,249.99,true,1.5,B
 5,Audifonos,10,99.99,true,0.2,C
